@@ -1,0 +1,30 @@
+{% load sekizai_tags static humanize %}
+
+{% for download in downloads %}
+    <div class="download-container" data-media-prefix="{% get_media_prefix %}" data-filepath="{{ download.filepath }}">
+        <div class="download">
+            <span class="download-name">{{ download.name }}</span>
+            <span class="download-timestamp">{{ download.timestamp|naturaltime }}</span>
+        </div>
+        <span class="download-clear"><i class="fa fa-times-circle"></i></span>
+
+        <div class="progress" style="height: 4px;">
+            <div class="progress-bar progress-bar-striped{% if not download.complete %} progress-bar-animated{% endif %}" role="progressbar"
+                 style="width: {{ download.percentage }}%" aria-valuenow="{{ download.percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+    </div>
+{% empty %}
+    <a class="dropdown-item" href="">No downloads</a>
+{% endfor %}
+
+{% block js %}
+    <script>
+        $(".download-name").on("click", function () {
+            let $dl = $(this).closest(".download-container");
+            window.location.href = $dl.data("media-prefix") + $dl.data("filepath");
+        });
+        $(".download-clear").on("click", function () {
+            clearDownload($(this).closest(".download-container").data("filepath"));
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,11 @@
+from django.conf import settings
+
+DEFAULT_TIMEOUT = 60 * 60 * 24
+DEFAULT_DOWNLOAD_TEMPLATE = "async_downloads/templates/download_items.html"
+DEFAULT_PATH_PREFIX = "exports"
+DEFAULT_USER_KEY_FORMAT = "async_downloads/{}"
+
+TIMEOUT = getattr(settings, "DOWNLOADS_TIMEOUT", DEFAULT_TIMEOUT)
+DOWNLOAD_TEMPLATE = getattr(settings, "DOWNLOADS_DOWNLOAD_TEMPLATE", DEFAULT_DOWNLOAD_TEMPLATE)
+PATH_PREFIX = getattr(settings, "DOWNLOADS_PATH_PREFIX", DEFAULT_PATH_PREFIX)
+USER_KEY_FORMAT = getattr(settings, "DOWNLOADS_USER_KEY_FORMAT", DEFAULT_USER_KEY_FORMAT)
