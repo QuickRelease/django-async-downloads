@@ -25,8 +25,8 @@ def ajax_update(request):
     # TODO: split up complete and in progress async_downloads?
     return JsonResponse(
         {
-            "html": render_to_string(DOWNLOAD_TEMPLATE, {"async_downloads": downloads}),
-            "async_downloads": downloads,
+            "html": render_to_string(DOWNLOAD_TEMPLATE, {"downloads": downloads}),
+            "downloads": downloads,
             "in_progress": in_progress,
         }
     )
