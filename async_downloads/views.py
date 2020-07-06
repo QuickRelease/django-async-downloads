@@ -12,7 +12,7 @@ from async_downloads.settings import DOWNLOAD_TEMPLATE
 
 @login_required
 def ajax_update(request):
-    download_keys = cache.get(get_collection_key(request.user), [])
+    download_keys = cache.get(get_collection_key(request.user.pk), [])
     downloads = []
     in_progress = False
     for i, download_key in enumerate(download_keys):

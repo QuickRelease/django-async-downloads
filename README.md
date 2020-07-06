@@ -33,6 +33,8 @@ TODO: what needs to be done in `base.html`
 
 ## Usage
 
+TODO: using the JS
+
 ### Cache Functions
 
 #### `cache.init_download`
