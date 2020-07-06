@@ -6,13 +6,13 @@ from django.core.files.storage import default_storage
 from django.http import JsonResponse, HttpResponse
 from django.template.loader import render_to_string
 
-from async_downloads.cache import get_user_key
+from async_downloads.cache import get_collection_key
 from async_downloads.settings import DOWNLOAD_TEMPLATE
 
 
 @login_required
 def ajax_update(request):
-    download_keys = cache.get(get_user_key(request.user), [])
+    download_keys = cache.get(get_collection_key(request.user), [])
     downloads = []
     in_progress = False
     for i, download_key in enumerate(download_keys):
