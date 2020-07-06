@@ -1,0 +1,31 @@
+.download-container {
+    white-space: nowrap;
+    padding: 8px;
+}
+
+.download-container:hover {
+    background-color: #f7f7f7;
+}
+
+.download {
+    display: inline-grid;
+}
+
+.download-name:hover {
+    cursor: pointer;
+}
+
+.download-timestamp {
+    color: #6c757d !important;
+    font-size: small;
+}
+
+.download-clear {
+    color: #6c757d;
+    padding-left: 4px;
+}
+
+.download-clear:hover {
+    cursor: pointer;
+    color: #4c555d;
+}
