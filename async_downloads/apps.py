@@ -1,5 +1,5 @@
 from django.apps import AppConfig
 
 
-class DownloadsConfig(AppConfig):
+class AsyncDownloadsConfig(AppConfig):
     name = 'async_downloads'
