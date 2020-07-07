@@ -24,6 +24,7 @@
     overflow-x: hidden;
     overflow-y: auto;
     max-height: 50vh;
+    min-width: 300px;
 }
 
 #async-downloads .download-container {
