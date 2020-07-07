@@ -37,6 +37,7 @@ Include the download centre nav-menu:
     ...
 ```
 
+
 ## Usage
 
 TODO: using the JS
@@ -98,7 +99,16 @@ Delete expired downloads (where the download no longer exists in the cache).
 This is a clean up operation to prevent downloads that weren't manually deleted from building up,
 and should be run periodically to avoid bloating the server with files.
 
-This is best setup as a periodic task in your project.
+This is best setup as a periodic task in your project, which can be done by adding the following
+to your project's `celery.py`:
+```
+app.conf.beat_schedule = {
+    "async_downloads_cleanup": {
+        "task": "tasks.cleanup_expired_downloads",
+        "schedule": crontab(hour=0, minute=0, day_of_week=1)
+    }
+}
+```
 
 
 ## Configurable Settings

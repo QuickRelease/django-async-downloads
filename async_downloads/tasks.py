@@ -14,7 +14,6 @@ def cleanup_expired_downloads():
     This is a clean up operation to prevent downloads that weren't manually
     deleted from building up, and should be run periodically.
     """
-    # TODO: set this up as a PeriodicTask, with configurable IntervalSchedule
     download_keys = default_storage.listdir(PATH_PREFIX)[0]
     for download_key in download_keys:
         if cache.get(download_key) is None:
