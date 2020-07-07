@@ -1,32 +1,54 @@
-.download-container {
+#async-downloads {
+    font-size: large;
+}
+
+#async-downloads.in-progress #async-downloads-icon {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+	0% {
+		color: #aaaaaa;
+	}
+
+	50% {
+        color: white;
+	}
+
+	100% {
+		color: #aaaaaa;
+	}
+}
+
+#async-downloads .download-container {
     white-space: nowrap;
     padding: 8px;
 }
 
-.download-container:hover {
+#async-downloads .download-container:hover {
     background-color: #f7f7f7;
 }
 
-.download {
+#async-downloads .download {
     display: inline-grid;
 }
 
-.download-name:hover {
+#async-downloads .download-name:hover {
     cursor: pointer;
 }
 
-.download-timestamp {
+#async-downloads .download-timestamp {
     color: #6c757d !important;
     font-size: small;
 }
 
-.download-clear {
+#async-downloads .download-clear {
     color: #6c757d;
     padding-left: 4px;
-    float: right;
+    /* TODO: find a way to make the clear button align right */
 }
 
-.download-clear:hover {
+#async-downloads .download-clear:hover {
     cursor: pointer;
     color: #4c555d;
 }

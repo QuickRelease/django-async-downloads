@@ -24,7 +24,7 @@ Add the CSS:
 
 Add the JS:
 ```
-<script src="{% static "js/async_downloads.js" %}" id="downloads_script"
+<script src="{% static "js/async_downloads.js" %}" id="async-downloads-script"
     data-url="{% url 'async_downloads:ajax_update' %}"
     data-clear-url="{% url 'async_downloads:ajax_clear_download' %}"></script>
 ```

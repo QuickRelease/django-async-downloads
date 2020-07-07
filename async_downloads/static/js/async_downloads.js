@@ -1,18 +1,18 @@
-const url = $("#downloads_script").data("url");
-const clearUrl = $("#downloads_script").data("clear-url");
+const url = $("#async-downloads-script").data("url");
+const clearUrl = $("#async-downloads-script").data("clear-url");
 
 function updateDownloads() {
     $.ajax({
         method: "GET",
         url: url,
     }).done(function (response) {
-        $("#downloads .dropdown-menu").html(response.html);
+        $("#async-downloads .dropdown-menu").html(response.html);
         if (response.in_progress) {
-            $("#downloads").addClass("in-progress");
+            $("#async-downloads").addClass("in-progress");
             setTimeout(updateDownloads, 1000);
         }
         else {
-            $("#downloads").removeClass("in-progress");
+            $("#async-downloads").removeClass("in-progress");
         }
     });
 }
