@@ -20,9 +20,15 @@
 	}
 }
 
+#async-downloads #downloads-dropdown {
+    overflow-x: hidden;
+    overflow-y: auto;
+    max-height: 50vh;
+}
+
 #async-downloads .download-container {
     white-space: nowrap;
-    padding: 8px;
+    padding: 16px;
 }
 
 #async-downloads .download-container:hover {
@@ -31,6 +37,12 @@
 
 #async-downloads .download {
     display: inline-grid;
+    width: calc(100% - 22px);
+}
+
+#async-downloads .download-name {
+    text-overflow: ellipsis;
+    overflow-x: hidden;
 }
 
 #async-downloads .download-name:hover {
@@ -44,8 +56,6 @@
 
 #async-downloads .download-clear {
     color: #6c757d;
-    padding-left: 4px;
-    /* TODO: find a way to make the clear button align right */
 }
 
 #async-downloads .download-clear:hover {
