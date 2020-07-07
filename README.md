@@ -29,7 +29,13 @@ Add the JS:
     data-clear-url="{% url 'async_downloads:ajax_clear_download' %}"></script>
 ```
 
-TODO: what needs to be done in `base.html`
+Include the download centre nav-menu:
+```
+<ul class="navbar-nav">
+    ...
+    {% include 'async_downloads/download_centre.html' %}
+    ...
+```
 
 ## Usage
 
