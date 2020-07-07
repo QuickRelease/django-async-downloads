@@ -64,12 +64,24 @@ Arguments:
 - `iterable`: an iterable of data rows to be written
 
 
+#### `cache.update_percentage`
+The asynchronous process can call this function to calculate and update the completion percentage.
+(download_key, total, cur, resolution=10):
+Arguments:
+- `download_key`: the cache key of this particular download
+- `total`: total to compare current progress against
+- `cur`: current progress index
+- `resolution`: resolution of the percentage calculation (make smaller for fewer updates, larger for
+more precision); default is `10`, meaning it will increase in steps of 10%. The value is capped between
+`1` and `100`.
+
+
 #### `cache.set_percentage`
-The asynchronous process should call this function to update the completion percentage.
+The asynchronous process can call this function to directly set the completion percentage.
 
 Arguments:
 - `download_key`: the cache key of this particular download
-- `percentage`: an integer between 0 and 100 (inclusive)
+- `percentage`: an number between 0 and 100 (inclusive)
 
 
 #### `cache.cleanup_collection`

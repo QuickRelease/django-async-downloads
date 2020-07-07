@@ -52,8 +52,19 @@ def save_download(download_key, iterable):
 
 def set_percentage(download_key, percentage):
     download = cache.get(download_key)
-    download["percentage"] = percentage
+    # Cap percentage between 0 and 100 and ensure it is an int
+    download["percentage"] = min(max(0, int(percentage)), 100)
     cache.set(download_key, download, TIMEOUT)
+
+
+def update_percentage(download_key, total, cur, resolution=10):
+    # Cap between 1 and 100, as there is no point in higher resolution,
+    # and lower than 1 is invalid
+    resolution = min(max(1, resolution), 100)
+    for x in range(1, resolution):
+        if cur + 1 == total // resolution * x:
+            set_percentage(download_key, (100 / resolution) * x)
+            break
 
 
 def cleanup_collection(collection_key):
