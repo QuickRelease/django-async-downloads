@@ -6,6 +6,7 @@ import uuid
 
 from django.core.cache import cache
 from django.core.files.storage import default_storage
+from pathvalidate import sanitize_filename
 
 from async_downloads.settings import COLLECTION_KEY_FORMAT, PATH_PREFIX, TIMEOUT
 
@@ -16,6 +17,7 @@ def get_collection_key(pk):
 
 def init_download(pk, filename, name=None):
     download_key = f"{uuid.uuid4()}"
+    filename = sanitize_filename(filename)
     filepath = os.path.join(PATH_PREFIX, download_key, filename)
     # TODO: consider inserting the collection key in here, so that it can be
     #  "touched" (`cache.touch`) to avoid the potential of the collection expiring

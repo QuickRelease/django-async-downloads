@@ -12,6 +12,8 @@ from async_downloads.settings import DOWNLOAD_TEMPLATE
 
 @login_required
 def ajax_update(request):
+    # TODO: can we make `request.user.pk` more generic to allow other
+    #  things to be used as keys?
     download_keys = cache.get(get_collection_key(request.user.pk), [])
     downloads = []
     in_progress = False
@@ -38,8 +40,8 @@ def ajax_clear_download(request):
     #  so that all deletion is done by one function
     filepath = request.POST.get("filepath")
     directory = os.path.split(filepath)[0]
-    default_storage.delete(filepath)
-    default_storage.delete(directory)
     download_key = os.path.split(directory)[1]
     cache.delete(download_key)
+    default_storage.delete(filepath)
+    default_storage.delete(directory)
     return HttpResponse("")
