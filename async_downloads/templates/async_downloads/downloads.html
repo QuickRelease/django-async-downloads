@@ -1,16 +1,18 @@
 {% load sekizai_tags static humanize %}
 
 {% for download in downloads %}
-    <div class="download-container" data-media-prefix="{% get_media_prefix %}" data-filepath="{{ download.filepath }}">
-        <div class="download" {% if download.errors %}data-toggle="tooltip" data-placement="left" title="{{ download.errors }}"{% endif %}>
+    <div class="download-container" data-media-prefix="{% get_media_prefix %}" data-filepath="{{ download.filepath }}"
+        {% if download.errors %}data-toggle="tooltip" data-placement="bottom" title="{{ download.errors }}"{% endif %}>
+        <div class="download">
             <span class="download-name">{{ download.name }}</span>
             <span class="download-timestamp">{{ download.timestamp|naturaltime }}</span>
         </div>
         <span class="download-clear"><i class="fa fa-times-circle"></i></span>
 
         <div class="progress" style="height: 4px;">
-            <div class="progress-bar progress-bar-striped {% if download.errors %}bg-danger{% elif download.complete %}bg-success{% else %}bg-info progress-bar-animated{% endif %}" role="progressbar"
-                 style="width: {{ download.percentage }}%" aria-valuenow="{{ download.percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
+            <div class="progress-bar progress-bar-striped
+                {% if download.errors %}bg-danger{% elif download.complete %}bg-success{% else %}bg-info progress-bar-animated{% endif %}" role="progressbar"
+                style="width: {{ download.percentage }}%" aria-valuenow="{{ download.percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
         </div>
     </div>
 {% empty %}
@@ -26,6 +28,6 @@
         $(".download-clear").on("click", function () {
             clearDownload($(this).closest(".download-container").data("filepath"));
         });
-        $("[data-toggle='tooltip']").tooltip();
+        $("#async-downloads [data-toggle='tooltip']").tooltip();
     </script>
 {% endblock %}
