@@ -2,7 +2,7 @@ from django.conf import settings
 
 DEFAULT_TIMEOUT = 60 * 60 * 24
 DEFAULT_DOWNLOAD_TEMPLATE = "async_downloads/downloads.html"
-DEFAULT_PATH_PREFIX = "async_downloads"
+DEFAULT_PATH_PREFIX = "downloads"
 DEFAULT_COLLECTION_KEY_FORMAT = "async_downloads/{}"
 
 TIMEOUT = getattr(settings, "ASYNC_DOWNLOADS_TIMEOUT", DEFAULT_TIMEOUT)
