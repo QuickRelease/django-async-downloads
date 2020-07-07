@@ -13,5 +13,5 @@ setup(
     long_description_content_type="text/markdown",
     url='https://github.com/QuickRelease/django-async-downloads.git',
     packages=find_packages(),
-    install_requires=['Django>=2.2.13', 'celery>=4.2.1'],
+    install_requires=['Django>=2.2.13', 'celery>=4.2.1', 'pathvalidate>=2.3.0'],
 )
