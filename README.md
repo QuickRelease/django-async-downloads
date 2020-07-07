@@ -75,22 +75,37 @@ Arguments:
 - `collection_key`: the cache key of a collection of downloads
 
 
-#### `cache.cleanup_expired_downloads`
+#### `tasks.cleanup_expired_downloads`
 Delete expired downloads (where the download no longer exists in the cache).
 This is a clean up operation to prevent downloads that weren't manually deleted from building up,
 and should be run periodically to avoid bloating the server with files.
+
+This is best setup as a periodic task in your project.
 
 
 ## Configurable Settings
 
 ### `ASYNC_DOWNLOADS_TIMEOUT`
-Default: `60 * 60 * 24`
+Default: `60 * 60 * 24` (1 day)
+
+This is the cache timeout used for cache operations. 
 
 ### `ASYNC_DOWNLOADS_DOWNLOAD_TEMPLATE`
-Default: `"download_items.html"`
+Default: `"async_downloads/downloads.html"`
+
+This is the template that will be used by the `ajax_update` view. You can override it by creating
+a template in `<project>/templates/async_downloads/downloads.html`, or else putting the template
+wherever you choose and changing this setting.
 
 ### `ASYNC_DOWNLOADS_PATH_PREFIX`
-Default: `"exports"`
+Default: `"downloads"`
+
+The parent directory for all downloads in the `MEDIA_ROOT` directory.
 
 ### `ASYNC_DOWNLOADS_COLLECTION_KEY_FORMAT`
 Default: `"async_downloads/{}"`
+
+The collection key keeps track of the cache keys of a grouped collection of downloads. In the
+unlikely event that this key format clashes with something in your project, you can change it.
+The expectation is for the string to have a user primary key inserted with `str.format`, so `{}`
+is required to be present.
