@@ -69,18 +69,3 @@ def cleanup_collection(collection_key):
     # cache.set(
     #     collection_key, [key for key in cache.get(collection_key, []) if cache.get(key) is not None]
     # )
-
-
-def cleanup_expired_downloads():
-    """
-    Delete expired downloads (where the download no longer exists in the cache).
-    This is a clean up operation to prevent downloads that weren't manually
-    deleted from building up, and should be run periodically.
-    """
-    download_keys = default_storage.listdir(PATH_PREFIX)[0]
-    for download_key in download_keys:
-        if cache.get(download_key) is None:
-            path = os.path.join(PATH_PREFIX, download_key)
-            filepath = os.path.join(path, default_storage.listdir(path)[1][0])
-            default_storage.delete(filepath)
-            default_storage.delete(path)
