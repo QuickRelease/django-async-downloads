@@ -25,6 +25,7 @@ def init_download(pk, filename, name=None):
         "filepath": filepath,
         "name": name or filename,
         "complete": False,
+        "errors": "",
         "percentage": 0,
     }
     collection_key = get_collection_key(pk)
@@ -39,12 +40,15 @@ def init_download(pk, filename, name=None):
 
 def save_download(download_key, iterable):
     # TODO: make more generic (not just CSV support)
+    download = cache.get(download_key)
     output = StringIO(newline="")
     writer = csv.writer(output)
-    for row in iterable:
-        writer.writerow(row)
-    download = cache.get(download_key)
-    default_storage.save(download["filepath"], output)
+    try:
+        for row in iterable:
+            writer.writerow(row)
+        default_storage.save(download["filepath"], output)
+    except Exception as e:
+        download["errors"] = str(e)
     download["complete"] = True
     download["percentage"] = 100
     cache.set(download_key, download, TIMEOUT)
