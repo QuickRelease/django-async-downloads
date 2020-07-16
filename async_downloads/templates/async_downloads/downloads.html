@@ -23,7 +23,9 @@
     <script>
         $(".download-name").on("click", function () {
             let $dl = $(this).closest(".download-container");
-            window.location.href = $dl.data("media-prefix") + $dl.data("filepath");
+            if ($dl.find(".progress-bar").hasClass("bg-success")) {
+                window.location.href = $dl.data("media-prefix") + $dl.data("filepath");
+            }
         });
         $(".download-clear").on("click", function () {
             clearDownload($(this).closest(".download-container").data("filepath"));
