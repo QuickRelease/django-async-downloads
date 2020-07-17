@@ -5,6 +5,7 @@ import os
 import uuid
 
 from django.core.cache import cache
+from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from pathvalidate import sanitize_filename
 
@@ -48,7 +49,7 @@ def save_download(download_key, iterable):
     try:
         for row in iterable:
             writer.writerow(row)
-        default_storage.save(download["filepath"], output)
+        default_storage.save(download["filepath"], ContentFile(output.getvalue()))
     except Exception as e:
         download["errors"] = str(e)
     download["complete"] = True
