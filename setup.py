@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='django-async-downloads',
-    version='0.1.4',
+    version='0.1.5',
     author='David Vaughan',
     author_email='david.vaughan@quickrelease.co.uk',
     description='Asynchronous downloads scaffolding for Django projects',

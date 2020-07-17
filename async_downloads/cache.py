@@ -44,7 +44,7 @@ def save_download(download_key, iterable):
     # TODO: make more generic (not just CSV support)
     download = cache.get(download_key)
     output = StringIO(newline="")
-    writer = csv.writer(output)
+    writer = csv.writer(output, lineterminator="\n")
     try:
         for row in iterable:
             writer.writerow(row)
