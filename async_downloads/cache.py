@@ -49,7 +49,7 @@ def save_download(download_key, iterable):
     try:
         for row in iterable:
             writer.writerow(row)
-        default_storage.save(download["filepath"], ContentFile(output.getvalue()))
+        default_storage.save(download["filepath"], ContentFile(output.getvalue().encode()))
     except Exception as e:
         download["errors"] = str(e)
     download["complete"] = True
