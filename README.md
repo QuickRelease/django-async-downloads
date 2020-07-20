@@ -12,6 +12,14 @@ In `requirements.txt`:
 -e git+https://github.com/QuickRelease/django-async-downloads.git#egg=django-async-downloads
 ```
 
+Add to your `INSTALLED_APPS`:
+```
+INSTALLED_APPS = [
+    ...
+    "async_downloads",
+]
+```
+
 Add to your project's `url_patterns`:
 ```
 path("async_downloads/", include("async_downloads.urls"))

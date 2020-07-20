@@ -21,9 +21,11 @@ def ajax_update(request):
         dl = cache.get(download_key)
         if not dl:
             continue
-        downloads.append(dl)
-        if not dl["complete"]:
+        if dl["complete"]:
+            dl["url"] = default_storage.url(dl["filepath"])
+        else:
             in_progress = True
+        downloads.append(dl)
     # TODO: split up complete and in progress async_downloads?
     return JsonResponse(
         {

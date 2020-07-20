@@ -1,7 +1,7 @@
 {% load sekizai_tags static humanize %}
 
 {% for download in downloads %}
-    <div class="download-container" data-media-prefix="{% get_media_prefix %}" data-filepath="{{ download.filepath }}"
+    <div class="download-container" data-url="{{ download.url }}" data-filepath="{{ download.filepath }}"
         {% if download.errors %}data-toggle="tooltip" data-placement="bottom" title="{{ download.errors }}"{% endif %}>
         <div class="download">
             <span class="download-name">{{ download.name }}</span>
@@ -24,7 +24,7 @@
         $(".download-name").on("click", function () {
             let $dl = $(this).closest(".download-container");
             if ($dl.find(".progress-bar").hasClass("bg-success")) {
-                window.location.href = $dl.data("media-prefix") + $dl.data("filepath");
+                window.location.href = $dl.data("url");
             }
         });
         $(".download-clear").on("click", function () {
