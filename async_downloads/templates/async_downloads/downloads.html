@@ -1,4 +1,4 @@
-{% load sekizai_tags static humanize %}
+{% load sekizai_tags static humanize i18n %}
 
 {% for download in downloads %}
     <div class="download-container" data-url="{{ download.url }}" data-filepath="{{ download.filepath }}"
@@ -16,7 +16,7 @@
         </div>
     </div>
 {% empty %}
-    <a class="dropdown-item" href="">No downloads</a>
+    <a class="dropdown-item" href="">{% trans "No downloads" %}</a>
 {% endfor %}
 
 {% block js %}

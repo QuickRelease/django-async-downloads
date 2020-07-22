@@ -41,17 +41,23 @@ def init_download(pk, filename, name=None):
     return collection_key, download_key
 
 
-def save_download(download_key, iterable):
-    # TODO: make more generic (not just CSV support)
+def save_download(download_key, iterable=None, file=None):
+    # file is a BytesIO object
     download = cache.get(download_key)
-    output = StringIO(newline="")
-    writer = csv.writer(output, lineterminator="\n")
-    try:
-        for row in iterable:
-            writer.writerow(row)
-        default_storage.save(download["filepath"], ContentFile(output.getvalue().encode()))
-    except Exception as e:
-        download["errors"] = str(e)
+    if iterable is not None:
+        output = StringIO(newline="")
+        writer = csv.writer(output, lineterminator="\n")
+        try:
+            for row in iterable:
+                writer.writerow(row)
+            default_storage.save(download["filepath"], ContentFile(output.getvalue().encode()))
+        except Exception as e:
+            download["errors"] = str(e)
+    elif file is not None:
+        try:
+            default_storage.save(download["filepath"], File(file))
+        except Exception as e:
+            download["errors"] = str(e)
     download["complete"] = True
     download["percentage"] = 100
     cache.set(download_key, download, TIMEOUT)
