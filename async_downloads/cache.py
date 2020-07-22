@@ -41,10 +41,10 @@ def init_download(pk, filename, name=None):
     return collection_key, download_key
 
 
-def save_download(download_key, iterable=[], file=''):
+def save_download(download_key, iterable=None, file=None):
     # file is a BytesIO object
     download = cache.get(download_key)
-    if iterable:
+    if iterable is not None:
         output = StringIO(newline="")
         writer = csv.writer(output, lineterminator="\n")
         try:
@@ -53,7 +53,7 @@ def save_download(download_key, iterable=[], file=''):
             default_storage.save(download["filepath"], ContentFile(output.getvalue().encode()))
         except Exception as e:
             download["errors"] = str(e)
-    elif file:
+    elif file is not None:
         try:
             default_storage.save(download["filepath"], File(file))
         except Exception as e:
