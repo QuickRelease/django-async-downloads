@@ -112,12 +112,14 @@ to your project's `celery.py`:
 ```
 app.conf.beat_schedule = {
     "async_downloads_cleanup": {
-        "task": "tasks.cleanup_expired_downloads",
+        "task": "async_downloads.tasks.cleanup_expired_downloads",
         "schedule": crontab(hour=0, minute=0, day_of_week=1)
     }
 }
 ```
+and update app to include the async_downloads tasks:
 
+`app = Celery('proj', include=['async_downloads.tasks'])`
 
 ## Configurable Settings
 
