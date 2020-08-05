@@ -117,9 +117,6 @@ app.conf.beat_schedule = {
     }
 }
 ```
-and update app to include the async_downloads tasks:
-
-`app = Celery('proj', include=['async_downloads.tasks'])`
 
 ## Configurable Settings
 
