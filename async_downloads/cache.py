@@ -45,6 +45,8 @@ def init_download(pk, filename, name=None):
 def save_download(download_key, iterable=None, file=None):
     # file is a BytesIO object
     download = cache.get(download_key)
+    if not download:
+        return
     if iterable is not None:
         output = StringIO(newline="")
         writer = csv.writer(output, lineterminator="\n")
@@ -66,6 +68,8 @@ def save_download(download_key, iterable=None, file=None):
 
 def set_percentage(download_key, percentage):
     download = cache.get(download_key)
+    if not download:
+        return
     # Cap percentage between 0 and 100 and ensure it is an int
     download["percentage"] = min(max(0, int(percentage)), 100)
     cache.set(download_key, download, TIMEOUT)
