@@ -7,13 +7,8 @@ Asynchronous downloads scaffolding for Django projects.
 
 ## Installation
 
-In `requirements.txt`:
 ```
--e git+https://github.com/QuickRelease/django-async-downloads.git#egg=django-async-downloads
-```
-This will give you the latest version. It is recommended to fix the version in case something changes in a later release that breaks your integration:
-```
--e git+https://github.com/QuickRelease/django-async-downloads.git@<tag>#egg=django-async-downloads
+pip install django-async-downloads
 ```
 
 Add to your `INSTALLED_APPS`:
