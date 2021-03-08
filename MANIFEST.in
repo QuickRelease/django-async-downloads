@@ -1,2 +1,4 @@
 include LICENSE
 include README.md
+recursive-include async_downloads/static *
+recursive-include async_downloads/templates *
