@@ -1,6 +1,7 @@
 import csv
 from datetime import datetime
 from io import StringIO
+import logging
 import os
 import uuid
 
@@ -11,6 +12,8 @@ from django.core.files.storage import default_storage
 from pathvalidate import sanitize_filename
 
 from async_downloads.settings import COLLECTION_KEY_FORMAT, PATH_PREFIX, TIMEOUT
+
+logger = logging.getLogger(__name__)
 
 
 def get_collection_key(pk):
@@ -55,11 +58,21 @@ def save_download(download_key, iterable=None, file=None):
                 writer.writerow(row)
             default_storage.save(download["filepath"], ContentFile(output.getvalue().encode()))
         except Exception as e:
+            logger.exception(
+                "Download failed with type: iterable key: %s name: %s",
+                download_key,
+                download.get("name"),
+            )
             download["errors"] = str(e)
     elif file is not None:
         try:
             default_storage.save(download["filepath"], File(file))
         except Exception as e:
+            logger.exception(
+                "Download failed with type: File key: %s name: %s",
+                download_key,
+                download.get("name"),
+            )
             download["errors"] = str(e)
     download["complete"] = True
     download["percentage"] = 100
