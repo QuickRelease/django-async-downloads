@@ -1,13 +1,13 @@
 import os
 
-from celery import task
+from celery import shared_task
 from django.core.cache import cache
 from django.core.files.storage import default_storage
 
 from async_downloads.settings import PATH_PREFIX
 
 
-@task()
+@shared_task()
 def cleanup_expired_downloads():
     """
     Delete expired downloads (where the download no longer exists in the cache).
