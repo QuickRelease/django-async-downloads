@@ -27,7 +27,8 @@
                 window.location.href = $dl.data("url");
             }
         });
-        $(".download-clear").on("click", function () {
+        $(".download-clear").on("click", function (e) {
+            e.stopPropagation();
             clearDownload($(this).closest(".download-container").data("filepath"));
         });
         $("#async-downloads [data-toggle='tooltip']").tooltip();
