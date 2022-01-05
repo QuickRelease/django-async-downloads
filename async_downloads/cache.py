@@ -1,17 +1,16 @@
 import csv
+from tempfile import SpooledTemporaryFile
 from datetime import datetime
-from io import StringIO
 import logging
 import os
 import uuid
 
 from django.core.cache import cache
 from django.core.files import File
-from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from pathvalidate import sanitize_filename
 
-from async_downloads.settings import COLLECTION_KEY_FORMAT, PATH_PREFIX, TIMEOUT
+from async_downloads.settings import COLLECTION_KEY_FORMAT, PATH_PREFIX, TIMEOUT, IN_MEMORY_MAX_SIZE_BYTES
 
 logger = logging.getLogger(__name__)
 
@@ -51,12 +50,12 @@ def save_download(download_key, iterable=None, file=None):
     if not download:
         return
     if iterable is not None:
-        output = StringIO(newline="")
-        writer = csv.writer(output, lineterminator="\n")
         try:
-            for row in iterable:
-                writer.writerow(row)
-            default_storage.save(download["filepath"], ContentFile(output.getvalue().encode()))
+            with SpooledTemporaryFile(max_size=IN_MEMORY_MAX_SIZE_BYTES, mode='r+', newline="") as temp_file:
+                writer = csv.writer(temp_file, lineterminator="\n")
+                for row in iterable:
+                    writer.writerow(row)
+                default_storage.save(download["filepath"], temp_file)
         except Exception as e:
             logger.exception(
                 "Download failed with type: iterable key: %s name: %s",
