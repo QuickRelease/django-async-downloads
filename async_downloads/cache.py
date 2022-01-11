@@ -51,11 +51,11 @@ def save_download(download_key, iterable=None, file=None):
         return
     if iterable is not None:
         try:
-            with SpooledTemporaryFile(max_size=IN_MEMORY_MAX_SIZE_BYTES, mode='r+', newline="") as temp_file:
+            with SpooledTemporaryFile(max_size=IN_MEMORY_MAX_SIZE_BYTES, mode='w+', newline="", encoding="utf-8") as temp_file:
                 writer = csv.writer(temp_file, lineterminator="\n")
                 for row in iterable:
                     writer.writerow(row)
-                default_storage.save(download["filepath"], temp_file)
+                default_storage.save(download["filepath"], temp_file._file.buffer)
         except Exception as e:
             logger.exception(
                 "Download failed with type: iterable key: %s name: %s",
