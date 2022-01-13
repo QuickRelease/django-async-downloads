@@ -63,3 +63,20 @@
     cursor: pointer;
     color: #4c555d;
 }
+
+#async-downloads .gaia-download-container {
+    border-radius: 5px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: row;
+    border: 1px solid #DEE2E6;
+}
+
+#async-downloads .gaia-product-label {
+    width: 8px;
+}
+
+#async-downloads .download-content {
+    padding: 15px;
+    width: 100%;
+}
