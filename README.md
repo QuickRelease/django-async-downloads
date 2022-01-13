@@ -58,7 +58,7 @@ the download key (and possibly the collection key) into the asynchronous functio
 status can be updated.
 
 Arguments:
-- `pk`: the unique identifier for a collection of downloads - this will typically be a user PK
+- `username`: the unique identifier for a collection of downloads - this will typically be a user name
 - `filename`: the name of the file being downloaded (does not need to be unique)
 - `name`: (optional) the name to associate with this download - defaults to `filename`
 

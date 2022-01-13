@@ -60,17 +60,13 @@ def init_generic_csv_download(
 ):
     """`init_download` helper with some sensible defaults for filename and display name,
     appending a modified ISO-8601 timestamp"""
-    if isinstance(user, AbstractBaseUser):
-        user_id = user.pk
-    else:
-        user_id = user
 
     timestamp = timezone.now()
 
     filename = f"{name.replace(' ', '_')}_{timestamp.strftime('%Y-%m-%d_%H-%M')}.csv"
 
     collection_key, download_key = init_download(
-        user_id, filename, f"{name} {timestamp.strftime('%Y-%m-%d')}"
+        user, filename, f"{name} {timestamp.strftime('%Y-%m-%d')}"
     )
 
     task.delay(download_key, *task_args, **task_kwargs)

@@ -12,9 +12,7 @@ from async_downloads.settings import DOWNLOAD_TEMPLATE
 
 @login_required
 def ajax_update(request):
-    # TODO: can we make `request.user.pk` more generic to allow other
-    #  things to be used as keys?
-    download_keys = cache.get(get_collection_key(request.user.pk), [])
+    download_keys = cache.get(get_collection_key(request.user), [])
     downloads = []
     in_progress = False
     for i, download_key in enumerate(download_keys):

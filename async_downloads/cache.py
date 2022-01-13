@@ -1,10 +1,16 @@
 import csv
+<<<<<<< HEAD
 from tempfile import SpooledTemporaryFile
 from datetime import datetime
+=======
+>>>>>>> 2caabb8 (feat: change user identify method from pk to username)
 import logging
 import os
 import uuid
+from datetime import datetime
+from io import StringIO
 
+from django.contrib.auth import get_user_model
 from django.core.cache import cache
 from django.core.files import File
 from django.core.files.storage import default_storage
@@ -15,11 +21,22 @@ from async_downloads.settings import COLLECTION_KEY_FORMAT, PATH_PREFIX, TIMEOUT
 logger = logging.getLogger(__name__)
 
 
-def get_collection_key(pk):
-    return COLLECTION_KEY_FORMAT.format(pk)
+def get_collection_key(user):
+    username = None
+    user_model = get_user_model()
+    if isinstance(user, user_model):
+        username = user.username
+    elif isinstance(user, int):
+        username = user_model.objects.get(pk=user).username
+    elif isinstance(user, str):
+        if user.isdigit():
+            username = user_model.objects.get(pk=int(user)).username
+        else:
+            username = user
+    return COLLECTION_KEY_FORMAT.format(username)
 
 
-def init_download(pk, filename, name=None):
+def init_download(user, filename, name=None):
     download_key = f"{uuid.uuid4()}"
     filename = sanitize_filename(filename)
     filepath = os.path.join(PATH_PREFIX, download_key, filename)
@@ -34,7 +51,7 @@ def init_download(pk, filename, name=None):
         "errors": "",
         "percentage": 0,
     }
-    collection_key = get_collection_key(pk)
+    collection_key = get_collection_key(user)
     # TODO: locking mechanism - consider https://pypi.org/project/django-cache-lock/
     # TODO: build the cleanup of expired keys into this?
     #  (since we are already modifying the cache entry)
