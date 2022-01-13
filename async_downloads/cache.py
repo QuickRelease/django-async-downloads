@@ -1,15 +1,13 @@
 import csv
-<<<<<<< HEAD
 from tempfile import SpooledTemporaryFile
 from datetime import datetime
-=======
->>>>>>> 2caabb8 (feat: change user identify method from pk to username)
 import logging
 import os
 import uuid
 from datetime import datetime
 from io import StringIO
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.cache import cache
 from django.core.files import File
@@ -17,11 +15,13 @@ from django.core.files.storage import default_storage
 from pathvalidate import sanitize_filename
 
 from async_downloads.settings import COLLECTION_KEY_FORMAT, PATH_PREFIX, TIMEOUT, IN_MEMORY_MAX_SIZE_BYTES
+from django.conf import settings
+from async_downloads.ws_consumers import ws_update_downloads
 
 logger = logging.getLogger(__name__)
 
 
-def get_collection_key(user):
+def get_username(user):
     username = None
     user_model = get_user_model()
     if isinstance(user, user_model):
@@ -33,7 +33,11 @@ def get_collection_key(user):
             username = user_model.objects.get(pk=int(user)).username
         else:
             username = user
-    return COLLECTION_KEY_FORMAT.format(username)
+    return username
+
+
+def get_collection_key(user):
+    return COLLECTION_KEY_FORMAT.format(get_username(user))
 
 
 def init_download(user, filename, name=None):
@@ -50,6 +54,7 @@ def init_download(user, filename, name=None):
         "complete": False,
         "errors": "",
         "percentage": 0,
+        "product": settings.PRODUCT,
     }
     collection_key = get_collection_key(user)
     # TODO: locking mechanism - consider https://pypi.org/project/django-cache-lock/
@@ -58,6 +63,7 @@ def init_download(user, filename, name=None):
     download_keys = [download_key] + cache.get(collection_key, [])
     cache.set(collection_key, download_keys, TIMEOUT)
     cache.set(download_key, download, TIMEOUT)
+    ws_update_downloads(get_username(user))
     return collection_key, download_key
 
 

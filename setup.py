@@ -28,6 +28,12 @@ setup(
     keywords="django download asynchronous async celery",
     packages=["async_downloads"],
     include_package_data=True,
-    install_requires=['Django>=2.0', 'celery>=4.2.1', 'pathvalidate>=2.3.0'],
+    install_requires=[
+        "Django>=2.0",
+        "celery>=4.2.1",
+        "pathvalidate>=2.3.0",
+        "channels>=3.0.4",
+        "channels_redis>=3.3.1",
+    ],
     license="MIT",
 )
