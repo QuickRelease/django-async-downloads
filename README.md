@@ -44,6 +44,84 @@ Include the download centre nav-menu:
     ...
 ```
 
+## WS mode
+Package can be used with websockets to provide asynchronous communication
+between different projects that want to share same async-downloads resources.
+If package will be used in websockets mode additional settings must be applied.
+One of the projects in same suite becomes 'master' and other apps must connect 
+to that 'master'.
+* Inside each product in suite, inside common settings `WS_MODE` must be toggled on,
+  project name must be specified as, and master url need to be provided.
+    ```
+    ASYNC_DOWNLOADS_WS_MODE = True
+    ASYNC_DOWNLOADS_PROJECT_NAME='example_name'
+    ASYNC_DOWNLOADS_MASTER_URL='http://example.com'
+    ```
+* Main product need to be configured as a `ASGI` and proper WS urls need to be configured:
+    ```
+    # example asgi.py
+    from django.core.asgi import get_asgi_application
+
+    from channels.auth import AuthMiddlewareStack
+    from channels.routing import ProtocolTypeRouter, URLRouter
+
+    import ws.urls
+
+    application = ProtocolTypeRouter(
+        {
+            "http": get_asgi_application(),
+            "websocket": AuthMiddlewareStack(URLRouter(ws.urls.urlpatterns)),
+        }
+    )
+    ```
+    ```
+    # ws/urls.py
+    from async_downloads.ws_consumers import DownloadsConsumer
+     
+     urlpatterns += [
+        re_path(r"ws/downloads/(?P<username>[\w.]+)/$", DownloadsConsumer.as_asgi()),
+     ]
+    ```
+* Add in main product `grand_base.html` async-downloads section. Same should be applied 
+    for each product in suite.
+    ```
+    <!-- Async Downloads -->
+    {{ request.user.get_username|json_script:"username" }}
+    {{ MASTER_URL|json_script:"MASTER_URL" }}
+    <script src="{% static "js/ws_async_downloads.js" %}" id="async-downloads-script" data-url="{% url 'async_downloads:ajax_update' %}" ></script>
+    ```
+
+* Configure `CHANNEL_LAYERS` inside common settings. Channel layer should be
+    the same in every product in suite.
+    ```
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels_redis.core.RedisChannelLayer",
+            "CONFIG": {
+                "hosts": [("127.0.0.1", 6379)],
+            },
+        },
+    }
+    ```
+* Download cache between every product in suite must be shared. Currently `django-async-downloads` 
+    will require `CACHE` named `downloads` and that setting should be inside every product.
+    Example config that create two separate `default` and `downloads` caches. Usage of default cache 
+    inside product do not change with that settings.
+    ```
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.db.DatabaseCache",
+            "LOCATION": "cachetable",
+            "KEY_PREFIX": "local",
+        },
+        "downloads": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": "redis://127.0.0.1:6379/1",
+            "KEY_PREFIX": "downloads",
+            "OPTIONS": {"CLIENT_CLASS": "django_redis.client.DefaultClient",},
+        }
+    }
+    ```
 
 ## Usage
 
@@ -143,3 +221,8 @@ The collection key keeps track of the cache keys of a grouped collection of down
 unlikely event that this key format clashes with something in your project, you can change it.
 The expectation is for the string to have a user primary key inserted with `str.format`, so `{}`
 is required to be present.
+
+### `ASYNC_DOWNLOADS_WS_CHANNEL_NAME`
+Default: `"downloads"`
+
+The channel name for all shared infromation about download in channels cache layer.
