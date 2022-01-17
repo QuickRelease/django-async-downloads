@@ -20,6 +20,13 @@
 	}
 }
 
+.dropdown-menu {
+    padding: 0;
+    margin: 0;
+    border-radius: 5px;
+    margin-top: 5;
+}
+
 #async-downloads #downloads-dropdown {
     overflow-x: hidden;
     overflow-y: auto;
@@ -64,7 +71,7 @@
     color: #4c555d;
 }
 
-#async-downloads .gaia-download-container {
+#async-downloads .ws-download-container {
     border-radius: 5px;
     overflow: hidden;
     display: flex;
@@ -72,7 +79,7 @@
     border: 1px solid #DEE2E6;
 }
 
-#async-downloads .gaia-product-label {
+#async-downloads .ws-product-label {
     width: 8px;
 }
 

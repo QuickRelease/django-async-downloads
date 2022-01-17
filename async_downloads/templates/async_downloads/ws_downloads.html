@@ -1,13 +1,13 @@
 {% load sekizai_tags static humanize i18n %}
 
 {% for download in downloads %}
-    <div class="gaia-download-container" data-url="{{ download.url }}" data-filepath="{{ download.filepath }}"
+    <div class="ws-download-container" id="{{ download.downloadKey }}" data-url="{{ download.url }}" data-filepath="{{ download.filepath }}"
         {% if download.errors %}data-toggle="tooltip" data-placement="bottom" title="{{ download.errors }}"{% endif %}>
-        <div class="gaia-product-label background-color-{{ download.product }}"></div>
+        <div class="ws-product-label background-color-{{ download.product }}"></div>
         <div class="download-content">
             <div class="download">
                 <span class="download-name">{{ download.name }}</span>
-                <span class="download-timestamp">{{ download.timestamp|naturaltime }}</span>
+                <span class="download-timestamp" value="{{ download.timestamp }}">{{ download.timestamp|naturaltime }}</span>
             </div>
             <span class="download-clear"><i class="fa fa-times-circle"></i></span>
 
@@ -29,10 +29,6 @@
             if ($dl.find(".progress-bar").hasClass("bg-success")) {
                 window.location.href = $dl.data("url");
             }
-        });
-        $(".download-clear").on("click", function (e) {
-            e.stopPropagation();
-            clearDownload($(this).closest(".download-content").closest(".gaia-download-container").data("filepath"));
         });
         $("#async-downloads [data-toggle='tooltip']").tooltip();
     </script>

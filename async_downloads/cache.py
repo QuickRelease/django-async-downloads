@@ -1,24 +1,27 @@
 import csv
-from tempfile import SpooledTemporaryFile
-from datetime import datetime
 import logging
 import os
 import uuid
 from datetime import datetime
-from io import StringIO
+from tempfile import SpooledTemporaryFile
 
-from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.core.cache import cache
+from django.core.cache import cache, caches
 from django.core.files import File
 from django.core.files.storage import default_storage
 from pathvalidate import sanitize_filename
 
-from async_downloads.settings import COLLECTION_KEY_FORMAT, PATH_PREFIX, TIMEOUT, IN_MEMORY_MAX_SIZE_BYTES
-from django.conf import settings
-from async_downloads.ws_consumers import ws_update_downloads
+from async_downloads.settings import (COLLECTION_KEY_FORMAT, WS_MODE,
+                                      IN_MEMORY_MAX_SIZE_BYTES, PATH_PREFIX,
+                                      PRODUCT, TIMEOUT)
+from async_downloads.ws_consumers import ws_init_download
 
 logger = logging.getLogger(__name__)
+
+
+# change default cache to shared one between every project
+if WS_MODE:
+    cache = caches["downloads"]
 
 
 def get_username(user):
@@ -54,8 +57,10 @@ def init_download(user, filename, name=None):
         "complete": False,
         "errors": "",
         "percentage": 0,
-        "product": settings.PRODUCT,
+        "url": "",
     }
+    if WS_MODE:
+        download["product"]: PRODUCT
     collection_key = get_collection_key(user)
     # TODO: locking mechanism - consider https://pypi.org/project/django-cache-lock/
     # TODO: build the cleanup of expired keys into this?
@@ -63,7 +68,8 @@ def init_download(user, filename, name=None):
     download_keys = [download_key] + cache.get(collection_key, [])
     cache.set(collection_key, download_keys, TIMEOUT)
     cache.set(download_key, download, TIMEOUT)
-    ws_update_downloads(get_username(user))
+    if WS_MODE:
+        ws_init_download(get_username(user), download_key)
     return collection_key, download_key
 
 
@@ -74,7 +80,12 @@ def save_download(download_key, iterable=None, file=None):
         return
     if iterable is not None:
         try:
-            with SpooledTemporaryFile(max_size=IN_MEMORY_MAX_SIZE_BYTES, mode='w+', newline="", encoding="utf-8") as temp_file:
+            with SpooledTemporaryFile(
+                max_size=IN_MEMORY_MAX_SIZE_BYTES,
+                mode="w+",
+                newline="",
+                encoding="utf-8",
+            ) as temp_file:
                 writer = csv.writer(temp_file, lineterminator="\n")
                 for row in iterable:
                     writer.writerow(row)

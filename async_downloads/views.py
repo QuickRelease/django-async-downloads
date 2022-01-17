@@ -1,14 +1,17 @@
 import os
 
 from django.contrib.auth.decorators import login_required
-from django.core.cache import cache
+from django.core.cache import caches,cache
 from django.core.files.storage import default_storage
 from django.http import JsonResponse, HttpResponse
 from django.template.loader import render_to_string
 
 from async_downloads.cache import get_collection_key
-from async_downloads.settings import DOWNLOAD_TEMPLATE
+from async_downloads.settings import DOWNLOAD_TEMPLATE, WS_MODE
 
+# change default cache to shared one between every project
+if WS_MODE:
+    cache = caches["downloads"]
 
 @login_required
 def ajax_update(request):
@@ -23,6 +26,9 @@ def ajax_update(request):
             dl["url"] = default_storage.url(dl["filepath"])
         else:
             in_progress = True
+        if WS_MODE:
+            dl["timestamp"] = str(dl["timestamp"])
+            dl["downloadKey"] = download_key
         downloads.append(dl)
     # TODO: split up complete and in progress async_downloads?
     return JsonResponse(
