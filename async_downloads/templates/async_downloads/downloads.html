@@ -1,18 +1,20 @@
 {% load sekizai_tags static humanize i18n %}
 
 {% for download in downloads %}
-    <div class="download-container" data-url="{{ download.url }}" data-filepath="{{ download.filepath }}"
+    <div class="download-container" id="download-{{ download.download_key }}" data-url="{{ download.url }}" data-filepath="{{ download.filepath }}"
         {% if download.errors %}data-toggle="tooltip" data-placement="bottom" title="{{ download.errors }}"{% endif %}>
-        <div class="download">
-            <span class="download-name">{{ download.name }}</span>
-            <span class="download-timestamp">{{ download.timestamp|naturaltime }}</span>
-        </div>
-        <span class="download-clear"><i class="fa fa-times-circle"></i></span>
+        <div class="download-content {{ download.css_class }}">
+            <div class="download">
+                <span class="download-name">{{ download.name }}</span>
+                <span class="download-timestamp" value="{{ download.timestamp }}">{{ download.timestamp|naturaltime }}</span>
+            </div>
+            <span class="download-clear"><i class="fa fa-times-circle"></i></span>
 
-        <div class="progress" style="height: 4px;">
-            <div class="progress-bar progress-bar-striped
-                {% if download.errors %}bg-danger{% elif download.complete %}bg-success{% else %}bg-info progress-bar-animated{% endif %}" role="progressbar"
-                style="width: {{ download.percentage }}%" aria-valuenow="{{ download.percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
+            <div class="progress" style="height: 4px;">
+                <div class="progress-bar progress-bar-striped
+                    {% if download.errors %}bg-danger{% elif download.complete %}bg-success{% else %}bg-info progress-bar-animated{% endif %}" role="progressbar"
+                    style="width: {{ download.percentage }}%" aria-valuenow="{{ download.percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
         </div>
     </div>
 {% empty %}
@@ -26,10 +28,6 @@
             if ($dl.find(".progress-bar").hasClass("bg-success")) {
                 window.location.href = $dl.data("url");
             }
-        });
-        $(".download-clear").on("click", function (e) {
-            e.stopPropagation();
-            clearDownload($(this).closest(".download-container").data("filepath"));
         });
         $("#async-downloads [data-toggle='tooltip']").tooltip();
     </script>
