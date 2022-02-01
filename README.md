@@ -44,6 +44,63 @@ Include the download centre nav-menu:
     ...
 ```
 
+## WS mode
+Package can be used with websockets to provide asynchronous communication
+between frontend and backend.
+If package will be used in websockets mode additional settings must be applied.
+* Inside common settings `WS_MODE` must be toggled on.
+    ```
+    ASYNC_DOWNLOADS_WS_MODE = True
+    ```
+* Application needs to be configured as a `ASGI` and proper WS urls need to be configured:
+    ```
+    # ws/urls.py
+    from async_downloads.ws_consumers import DownloadsConsumer
+     
+     urlpatterns += [
+        re_path(r"ws/downloads/(?P<username>[\w.]+)/$", DownloadsConsumer.as_asgi()),
+     ]
+    ```
+    ```
+    # example asgi.py
+    from django.core.asgi import get_asgi_application
+
+    from channels.auth import AuthMiddlewareStack
+    from channels.routing import ProtocolTypeRouter, URLRouter
+
+    import ws.urls
+
+    application = ProtocolTypeRouter(
+        {
+            "http": get_asgi_application(),
+            "websocket": AuthMiddlewareStack(URLRouter(ws.urls.urlpatterns)),
+        }
+    )
+    ```
+
+* Change in application template async-downloads section to use WS js version.
+    ```
+    # example: FULL_WS_URL = "http://app.com/ws/downloads/"
+    <script src="{% static "js/ws_async_downloads.js" %}" id="async-downloads-script"
+        data-url="{{ FULL_WS_URL }}"
+    </script>
+    ```
+    - `data-url` must be an absolute URL because this is required for a WebSocket connection,
+        and it must include the protocol because the `ws_async_downloads.js` script will 
+        inspect it to determine which WebSockets protocol to use - `ws` if `http` or `wss` 
+        if `https`.
+
+* Configure `CHANNEL_LAYERS` inside common settings. Example config:
+    ```
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels_redis.core.RedisChannelLayer",
+            "CONFIG": {
+                "hosts": [("127.0.0.1", 6379)],
+            },
+        },
+    }
+    ```
 
 ## Usage
 
@@ -58,7 +115,8 @@ the download key (and possibly the collection key) into the asynchronous functio
 status can be updated.
 
 Arguments:
-- `pk`: the unique identifier for a collection of downloads - this will typically be a user PK
+- `user`: the unique identifier for a collection of downloads - this will typically be a user
+         object but can be user PK or username.
 - `filename`: the name of the file being downloaded (does not need to be unique)
 - `name`: (optional) the name to associate with this download - defaults to `filename`
 
@@ -143,3 +201,22 @@ The collection key keeps track of the cache keys of a grouped collection of down
 unlikely event that this key format clashes with something in your project, you can change it.
 The expectation is for the string to have a user primary key inserted with `str.format`, so `{}`
 is required to be present.
+
+### `ASYNC_DOWNLOADS_WS_CHANNEL_NAME`
+Default: `"downloads"`
+
+The channel name for all shared information about download in channels cache layer.
+
+### `ASYNC_DOWNLOADS_CACHE_NAME`
+
+If this settings will be added default cache will be changed into new with provided name.
+
+### `ASYNC_DOWNLOADS_WS_MODE`
+Default: `False`
+
+If this flag will be set to `True` package will be set to work with WebSockets in [WS_MODE](#ws-mode).
+
+### `ASYNC_DOWNLOADS_CSS_CLASS`
+Default: `None`
+
+Additional CSS class can be added to `download-content` div.

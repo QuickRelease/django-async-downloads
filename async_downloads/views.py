@@ -1,20 +1,17 @@
 import os
 
 from django.contrib.auth.decorators import login_required
-from django.core.cache import cache
 from django.core.files.storage import default_storage
 from django.http import JsonResponse, HttpResponse
 from django.template.loader import render_to_string
 
 from async_downloads.cache import get_collection_key
-from async_downloads.settings import DOWNLOAD_TEMPLATE
+from async_downloads.settings import DOWNLOAD_TEMPLATE, WS_MODE, cache
 
 
 @login_required
 def ajax_update(request):
-    # TODO: can we make `request.user.pk` more generic to allow other
-    #  things to be used as keys?
-    download_keys = cache.get(get_collection_key(request.user.pk), [])
+    download_keys = cache.get(get_collection_key(request.user), [])
     downloads = []
     in_progress = False
     for i, download_key in enumerate(download_keys):
@@ -25,6 +22,9 @@ def ajax_update(request):
             dl["url"] = default_storage.url(dl["filepath"])
         else:
             in_progress = True
+        if WS_MODE:
+            dl["timestamp"] = str(dl["timestamp"])
+            dl["download_key"] = download_key
         downloads.append(dl)
     # TODO: split up complete and in progress async_downloads?
     return JsonResponse(

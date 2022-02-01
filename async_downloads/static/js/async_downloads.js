@@ -12,8 +12,7 @@ function updateDownloads() {
         if (response.in_progress) {
             $("#async-downloads").addClass("in-progress");
             setTimeout(updateDownloads, 1000);
-        }
-        else {
+        } else {
             $("#async-downloads").removeClass("in-progress");
         }
     });
@@ -23,7 +22,7 @@ function clearDownload(filepath) {
     $.ajax({
         method: "POST",
         url: clearUrl,
-        data: {filepath: filepath},
+        data: { filepath: filepath },
     }).done(function (response) {
         updateDownloads();
     });
@@ -31,4 +30,8 @@ function clearDownload(filepath) {
 
 $(function () {
     updateDownloads();
+    $(document).on("click", ".download-clear", function (e) {
+        e.stopPropagation();
+        clearDownload($(this).closest(".download-container").data("filepath"));
+    });
 });

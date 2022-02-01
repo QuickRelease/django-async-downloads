@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='django-async-downloads',
-    version='0.3.1',
+    version='0.4.0',
     author='David Vaughan',
     author_email='david.vaughan@quickrelease.co.uk',
     maintainer="Quick Release (Automotive) Ltd.",
@@ -28,6 +28,12 @@ setup(
     keywords="django download asynchronous async celery",
     packages=["async_downloads"],
     include_package_data=True,
-    install_requires=['Django>=2.0', 'celery>=4.2.1', 'pathvalidate>=2.3.0'],
+    install_requires=[
+        "Django>=2.0",
+        "celery>=4.2.1",
+        "pathvalidate>=2.3.0",
+        "channels>=3.0",
+        "channels_redis>=3.0",
+    ],
     license="MIT",
 )

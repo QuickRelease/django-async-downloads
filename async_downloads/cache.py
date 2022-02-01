@@ -1,25 +1,46 @@
 import csv
-from tempfile import SpooledTemporaryFile
-from datetime import datetime
 import logging
 import os
 import uuid
+from datetime import datetime
+from tempfile import SpooledTemporaryFile
 
-from django.core.cache import cache
+from django.contrib.auth import get_user_model
 from django.core.files import File
 from django.core.files.storage import default_storage
 from pathvalidate import sanitize_filename
 
-from async_downloads.settings import COLLECTION_KEY_FORMAT, PATH_PREFIX, TIMEOUT, IN_MEMORY_MAX_SIZE_BYTES
+from async_downloads.settings import (
+    COLLECTION_KEY_FORMAT,
+    IN_MEMORY_MAX_SIZE_BYTES,
+    CSS_CLASS,
+    PATH_PREFIX,
+    TIMEOUT,
+    WS_MODE,
+    cache,
+)
+from async_downloads.ws_consumers import ws_init_download, ws_update_download
 
 logger = logging.getLogger(__name__)
 
 
-def get_collection_key(pk):
-    return COLLECTION_KEY_FORMAT.format(pk)
+def get_username(user):
+    username = None
+    user_model = get_user_model()
+    if isinstance(user, user_model):
+        username = user.username
+    elif isinstance(user, int):
+        username = user_model.objects.get(pk=user).username
+    else:
+        return user
+    return username
 
 
-def init_download(pk, filename, name=None):
+def get_collection_key(user):
+    return COLLECTION_KEY_FORMAT.format(get_username(user))
+
+
+def init_download(user, filename, name=None):
     download_key = f"{uuid.uuid4()}"
     filename = sanitize_filename(filename)
     filepath = os.path.join(PATH_PREFIX, download_key, filename)
@@ -27,20 +48,25 @@ def init_download(pk, filename, name=None):
     #  "touched" (`cache.touch`) to avoid the potential of the collection expiring
     #  before its downloads do
     download = {
+        "user": get_username(user),
         "timestamp": datetime.now(),
         "filepath": filepath,
         "name": name or filename,
         "complete": False,
         "errors": "",
         "percentage": 0,
+        "css_class": CSS_CLASS,
+        "url": "",
     }
-    collection_key = get_collection_key(pk)
+    collection_key = get_collection_key(user)
     # TODO: locking mechanism - consider https://pypi.org/project/django-cache-lock/
     # TODO: build the cleanup of expired keys into this?
     #  (since we are already modifying the cache entry)
     download_keys = [download_key] + cache.get(collection_key, [])
     cache.set(collection_key, download_keys, TIMEOUT)
     cache.set(download_key, download, TIMEOUT)
+    if WS_MODE:
+        ws_init_download(download_key)
     return collection_key, download_key
 
 
@@ -51,7 +77,12 @@ def save_download(download_key, iterable=None, file=None):
         return
     if iterable is not None:
         try:
-            with SpooledTemporaryFile(max_size=IN_MEMORY_MAX_SIZE_BYTES, mode='w+', newline="", encoding="utf-8") as temp_file:
+            with SpooledTemporaryFile(
+                max_size=IN_MEMORY_MAX_SIZE_BYTES,
+                mode="w+",
+                newline="",
+                encoding="utf-8",
+            ) as temp_file:
                 writer = csv.writer(temp_file, lineterminator="\n")
                 for row in iterable:
                     writer.writerow(row)
@@ -76,6 +107,8 @@ def save_download(download_key, iterable=None, file=None):
     download["complete"] = True
     download["percentage"] = 100
     cache.set(download_key, download, TIMEOUT)
+    if WS_MODE:
+        ws_update_download(download_key)
 
 
 def set_percentage(download_key, percentage):
@@ -85,6 +118,8 @@ def set_percentage(download_key, percentage):
     # Cap percentage between 0 and 100 and ensure it is an int
     download["percentage"] = min(max(0, int(percentage)), 100)
     cache.set(download_key, download, TIMEOUT)
+    if WS_MODE:
+        ws_update_download(download_key)
 
 
 def update_percentage(download_key, total, cur, resolution=10):
