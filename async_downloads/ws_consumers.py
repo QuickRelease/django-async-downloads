@@ -37,6 +37,8 @@ def ws_init_download(download_key):
 def ws_update_download(download_key):
     download = cache.get(download_key)
     download["timestamp"] = str(download["timestamp"])
+    if download["complete"]:
+        download["url"] = default_storage.url(download["filepath"])
     channel_layer = get_channel_layer()
     async_to_sync(channel_layer.group_send)(
         f"{WS_CHANNEL_NAME}_{download['user']}",
