@@ -1,9 +1,9 @@
 import json
 import os
 
-import requests
 from asgiref.sync import async_to_sync
 from channels.db import database_sync_to_async
+from channels.exceptions import DenyConnection
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.layers import get_channel_layer
 from django.contrib.auth import get_user_model
@@ -18,9 +18,7 @@ def ws_init_download(download_key):
     download = cache.get(download_key)
     download["download_key"] = download_key
     download["timestamp"] = str(download["timestamp"])
-    download["html"] = render_to_string(
-        DOWNLOAD_TEMPLATE, {"downloads": [download]}
-    )
+    download["html"] = render_to_string(DOWNLOAD_TEMPLATE, {"downloads": [download]})
     channel_layer = get_channel_layer()
     async_to_sync(channel_layer.group_send)(
         f"{WS_CHANNEL_NAME}_{download['user']}",
@@ -54,7 +52,10 @@ def ws_update_download(download_key):
 
 class DownloadsConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        self.username = self.scope["user"].username
+        user = self.scope["user"]
+        if not user.is_authenticated:
+            raise DenyConnection
+        self.username = user.username
         self.user = await database_sync_to_async(get_user_model().objects.get)(
             username=self.username
         )
@@ -63,7 +64,10 @@ class DownloadsConsumer(AsyncWebsocketConsumer):
         await self.accept()
 
     async def disconnect(self, close_code):
-        await self.channel_layer.group_discard(self.user_group_name, self.channel_name)
+        if hasattr(self, "user_group_name"):
+            await self.channel_layer.group_discard(
+                self.user_group_name, self.channel_name
+            )
 
     async def receive(self, text_data):
         data = json.loads(text_data)
