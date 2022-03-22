@@ -86,6 +86,8 @@ def save_download(download_key, iterable=None, file=None):
                 writer = csv.writer(temp_file, lineterminator="\n")
                 for row in iterable:
                     writer.writerow(row)
+                # Force any remaining bytes in the buffer
+                temp_file.flush()
                 default_storage.save(download["filepath"], temp_file._file.buffer)
         except Exception as e:
             logger.exception(
