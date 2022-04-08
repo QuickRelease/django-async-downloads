@@ -8,8 +8,16 @@ Asynchronous downloads scaffolding for Django projects.
 ## Installation
 
 ```
+# Without websocket support
 pip install django-async-downloads
+
+# With Websocket support
+pip install django-async-downloads[ws]
 ```
+
+Note at the present time on Windows, if you require websocket support,
+you will need "Microsoft Visual C++ 14.0" installed (https://visualstudio.microsoft.com/visual-cpp-build-tools/) 
+due to `hiredis` from the dependency chain (`channels_redis` -> `aioredis-py` -> `hiredis`).
 
 Add to your `INSTALLED_APPS`:
 ```
