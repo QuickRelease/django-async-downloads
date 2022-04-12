@@ -32,8 +32,12 @@ setup(
         "Django>=2.0",
         "celery>=4.2.1",
         "pathvalidate>=2.3.0",
-        "channels>=3.0",
-        "channels_redis>=3.0",
     ],
+    extras_require={
+        "ws": [
+            "channels>=3.0",
+            "channels_redis>=3.0",
+        ],
+    },
     license="MIT",
 )

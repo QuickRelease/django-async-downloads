@@ -1,3 +1,7 @@
 Django>=2.0
 celery>=4.2.1
 pathvalidate>=2.3.0
+
+# Websocket mode only:
+channels>=3.0
+channels_redis>=3.0
