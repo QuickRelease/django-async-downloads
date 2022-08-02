@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='django-async-downloads',
-    version='0.4.3',
+    version='0.4.4',
     author='David Vaughan',
     author_email='david.vaughan@quickrelease.co.uk',
     maintainer="Quick Release (Automotive) Ltd.",
