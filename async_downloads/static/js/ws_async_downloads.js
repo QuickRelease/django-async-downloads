@@ -1,9 +1,7 @@
 $(function () {
     function readablePeriod(timeStamp) {
-        //determine the timezone offset the browser applies to Date()
-        const offset = new Date().getTimezoneOffset() * 60000;
-
-        const diff = Date.now() - Date.parse(timeStamp) + offset;
+        // timeStamp should consist information about timezone
+        const diff = Date.now() - Date.parse(timeStamp);
         function suffix(number) {
             return (number > 1 ? "s" : "") + " ago";
         }

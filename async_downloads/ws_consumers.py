@@ -14,10 +14,14 @@ import async_downloads.settings as settings
 from async_downloads.settings import DOWNLOAD_TEMPLATE, WS_CHANNEL_NAME, cache
 
 
+def _timestamp_to_str(timestamp):
+    return timestamp.astimezone().isoformat()
+
+
 def ws_init_download(download_key):
     download = cache.get(download_key)
     download["download_key"] = download_key
-    download["timestamp"] = str(download["timestamp"])
+    download["timestamp"] = _timestamp_to_str(download["timestamp"])
     download["html"] = render_to_string(DOWNLOAD_TEMPLATE, {"downloads": [download]})
     channel_layer = get_channel_layer()
     async_to_sync(channel_layer.group_send)(
@@ -34,7 +38,7 @@ def ws_init_download(download_key):
 
 def ws_update_download(download_key):
     download = cache.get(download_key)
-    download["timestamp"] = str(download["timestamp"])
+    download["timestamp"] = _timestamp_to_str(download["timestamp"])
     if download["complete"]:
         download["url"] = default_storage.url(download["filepath"])
     channel_layer = get_channel_layer()
@@ -90,7 +94,7 @@ class DownloadsConsumer(AsyncWebsocketConsumer):
             if dl["complete"]:
                 dl["url"] = default_storage.url(dl["filepath"])
             dl["download_key"] = download_key
-            dl["timestamp"] = str(dl["timestamp"])
+            dl["timestamp"] = _timestamp_to_str(dl["timestamp"])
             dl["html"] = render_to_string(DOWNLOAD_TEMPLATE, {"downloads": [dl]})
             downloads.append({"download": dl, "download_key": download_key})
         await self.send(
