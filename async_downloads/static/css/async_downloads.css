@@ -29,6 +29,7 @@
 }
 
 #async-downloads #downloads-dropdown {
+    border-radius: 8px;
     overflow-x: hidden;
     overflow-y: auto;
     max-height: 50vh;
