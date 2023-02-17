@@ -39,8 +39,6 @@ def ws_init_download(download_key):
 def ws_update_download(download_key):
     download = cache.get(download_key)
     download["timestamp"] = _timestamp_to_str(download["timestamp"])
-    if download["complete"]:
-        download["url"] = default_storage.url(download["filepath"])
     channel_layer = get_channel_layer()
     async_to_sync(channel_layer.group_send)(
         f"{WS_CHANNEL_NAME}_{download['user']}",
@@ -91,8 +89,6 @@ class DownloadsConsumer(AsyncWebsocketConsumer):
             dl = cache.get(download_key)
             if not dl:
                 continue
-            if dl["complete"]:
-                dl["url"] = default_storage.url(dl["filepath"])
             dl["download_key"] = download_key
             dl["timestamp"] = _timestamp_to_str(dl["timestamp"])
             dl["html"] = render_to_string(DOWNLOAD_TEMPLATE, {"downloads": [dl]})
