@@ -108,6 +108,7 @@ def save_download(download_key, iterable=None, file=None):
             download["errors"] = str(e)
     download["complete"] = True
     download["percentage"] = 100
+    download["url"] = default_storage.url(download["filepath"])
     cache.set(download_key, download, TIMEOUT)
     if WS_MODE:
         ws_update_download(download_key)
