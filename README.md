@@ -130,12 +130,13 @@ Arguments:
 
 
 #### `cache.save_download`
-The asynchronous process should call this function when the iterable is prepared in order to save
-the output. The only supported format is CSV currently.
+The asynchronous process should call this function when the iterable or file is prepared in order to save
+the output.
 
 Arguments:
 - `download_key`: the cache key of this particular download
 - `iterable`: an iterable of data rows to be written
+- `file`: A file to be collected
 
 
 #### `cache.update_percentage`
