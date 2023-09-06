@@ -148,3 +148,22 @@ def cleanup_collection(collection_key):
     # cache.set(
     #     collection_key, [key for key in cache.get(collection_key, []) if cache.get(key) is not None]
     # )
+
+
+def set_error(download_key, error):
+    download = cache.get(download_key)
+    if not download:
+        return
+
+    logger.exception(
+        "Download failed with type: set_error key: %s name %s",
+        download_key,
+        download.get("name"),
+    )
+
+    download["errors"] = str(error)
+    download["complete"] = True
+    download["percentage"] = 100
+    cache.set(download_key, download, TIMEOUT)
+    if WS_MODE:
+        ws_update_download(download_key)
