@@ -91,9 +91,10 @@ def save_download(download_key, iterable=None, file=None):
                 default_storage.save(download["filepath"], temp_file._file.buffer)
         except Exception as e:
             logger.exception(
-                "Download failed with type: iterable key: %s name: %s",
+                "Download failed with type: iterable key: %s name: %s error: %s",
                 download_key,
                 download.get("name"),
+                str(e)
             )
             download["errors"] = str(e)
     elif file is not None:
@@ -101,9 +102,10 @@ def save_download(download_key, iterable=None, file=None):
             default_storage.save(download["filepath"], File(file))
         except Exception as e:
             logger.exception(
-                "Download failed with type: File key: %s name: %s",
+                "Download failed with type: File key: %s name: %s error: %s",
                 download_key,
                 download.get("name"),
+                str(e)
             )
             download["errors"] = str(e)
     download["complete"] = True
@@ -155,10 +157,11 @@ def set_error(download_key, error):
     if not download:
         return
 
-    logger.exception(
-        "Download failed with type: set_error key: %s name %s",
+    logger.error(
+        "Download failed with type: set_error key: %s name: %s error: %s",
         download_key,
         download.get("name"),
+        str(error)
     )
 
     download["errors"] = str(error)
