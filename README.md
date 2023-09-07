@@ -168,6 +168,13 @@ Arguments:
 - `collection_key`: the cache key of a collection of downloads
 
 
+### `cache.set_error`
+The asynchronous process can call this function to set an error message on the download.
+
+Arguments:
+- `download_key`: the cache key of this particular download
+- `error`: the error message to set
+
 #### `tasks.cleanup_expired_downloads`
 Delete expired downloads (where the download no longer exists in the cache).
 This is a clean up operation to prevent downloads that weren't manually deleted from building up,
