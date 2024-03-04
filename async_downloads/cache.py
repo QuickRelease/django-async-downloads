@@ -19,7 +19,8 @@ from async_downloads.settings import (
     WS_MODE,
     cache,
 )
-from async_downloads.ws_consumers import ws_init_download, ws_update_download
+if WS_MODE:
+    from async_downloads.ws_consumers import ws_init_download, ws_update_download
 
 logger = logging.getLogger(__name__)
 
