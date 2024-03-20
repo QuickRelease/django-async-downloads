@@ -71,7 +71,7 @@ def init_download(user, filename, name=None):
     return collection_key, download_key
 
 
-def save_download(download_key, iterable=None, file=None):
+def save_download(download_key, iterable=None, file=None, encoding="utf-8"):
     # file is a BytesIO object
     download = cache.get(download_key)
     if not download:
@@ -82,7 +82,7 @@ def save_download(download_key, iterable=None, file=None):
                 max_size=IN_MEMORY_MAX_SIZE_BYTES,
                 mode="w+",
                 newline="",
-                encoding="utf-8",
+                encoding=encoding,
             ) as temp_file:
                 writer = csv.writer(temp_file, lineterminator="\n")
                 for row in iterable:
