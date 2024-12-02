@@ -1,4 +1,8 @@
 $(function () {
+    if (document.querySelector("#IS_USER_ANONYMOUS") !== null && document.querySelector("#IS_USER_ANONYMOUS").textContent === "true") {
+        return;
+    }
+
     function readablePeriod(timeStamp) {
         // timeStamp should consist information about timezone
         const diff = Date.now() - Date.parse(timeStamp);

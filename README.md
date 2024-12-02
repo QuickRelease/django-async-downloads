@@ -88,6 +88,7 @@ If package will be used in websockets mode additional settings must be applied.
 
 * Change in application template async-downloads section to use WS js version.
     ```
+    {{ user.is_anonymous|json_script:"IS_USER_ANONYMOUS" }}
     # example: FULL_WS_URL = "http://app.com/ws/downloads/"
     <script src="{% static "js/ws_async_downloads.js" %}" id="async-downloads-script"
         data-url="{{ FULL_WS_URL }}"
@@ -97,6 +98,8 @@ If package will be used in websockets mode additional settings must be applied.
         and it must include the protocol because the `ws_async_downloads.js` script will 
         inspect it to determine which WebSockets protocol to use - `ws` if `http` or `wss` 
         if `https`.
+    - `IS_USER_ANONYMOUS` is a boolean that will be used to determine if the user is anonymous
+        and should not have access to the async download centre.
 
 * Configure `CHANNEL_LAYERS` inside common settings. Example config:
     ```
