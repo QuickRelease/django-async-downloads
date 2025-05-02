@@ -171,7 +171,7 @@ Arguments:
 - `collection_key`: the cache key of a collection of downloads
 
 
-### `cache.set_error`
+#### `cache.set_error`
 The asynchronous process can call this function to set an error message on the download.
 
 Arguments:
